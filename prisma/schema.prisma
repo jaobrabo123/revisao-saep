@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model mecanico {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  email   String    @unique @db.VarChar(254)
+  senha   String
+  veiculo veiculo[]
+}
+
+model ordem_servico {
+  id         Int     @id @default(autoincrement())
+  descricao  String  @db.VarChar(300)
+  veiculo_id Int
+  veiculo    veiculo @relation(fields: [veiculo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model veiculo {
+  id            Int             @id @default(autoincrement())
+  modelo        String          @db.VarChar(100)
+  placa         String          @unique @db.Char(7)
+  mecanico_id   Int
+  ordem_servico ordem_servico[]
+  mecanico      mecanico        @relation(fields: [mecanico_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
