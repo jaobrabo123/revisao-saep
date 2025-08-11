@@ -8,7 +8,7 @@ login.addEventListener('click', async () => {
         await axios.post('/login', {
             email: email.value,
             senha: senha.value
-        }, {withCredentials: true})
+        }, { withCredentials: true })
         window.location.href = '/veiculos';
     } catch (erro) {
         alert(erro.response.data.error)

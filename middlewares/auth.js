@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const CHAVE = process.env.SECRET_KEY;
 
 async function token(req, res, next) {
-    const token = req.cookie.token;
+    const token = req.cookies.token;
     if(!token) return res.status(401).json({ error: 'Mecanico não autenticado.'})
     jwt.verify(token, CHAVE, async(err, user)=>{
         if(err) {

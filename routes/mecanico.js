@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const token = require('../middlewares/auth.js');
 const CHAVE = process.env.SECRET_KEY;
 
 router.post('/mecanico', async(req, res)=>{
@@ -31,10 +32,28 @@ router.post('/mecanico', async(req, res)=>{
             maxAge: 3*24*60*60*1000
         })
         console.log(newMecanico)
-        res.status(201).json({message: 'Mecanico criado', mecanico: newMecanico})
+        return res.status(201).json({message: 'Mecanico criado', mecanico: newMecanico})
     } catch (erro) {
         console.error('Erro ao criar mecanico', erro)
-        res.status(500).json({ error: `Erro ao criar mecanico: ${erro.message}`})
+        return res.status(500).json({ error: `Erro ao criar mecanico: ${erro.message}`})
+    }
+})
+
+router.get('/mecanico', token, async(req, res)=>{
+    try{
+        const id = req.user.id;
+        const mecanico = await prisma.mecanico.findUniqueOrThrow({
+            where: {
+                id: id
+            }
+        })
+        return res.status(200).json({ mecanico })
+    }
+    catch(erro){
+        if(erro.code==='P2025'){
+            return res.status(404).json({ error: "Mecanico não encontrado."})
+        }
+        return res.status(500).json({ error: "Erro ao buscar mecânico: " + erro.message})
     }
 })
 

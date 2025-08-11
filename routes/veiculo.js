@@ -44,9 +44,14 @@ router.delete('/veiculo/:placa', token, async(req, res)=>{
 
 router.get('/veiculo', token, async(req, res)=>{
     try {
-        const veiculos = await prisma.veiculo.findMany()
+        const id = req.user.id;
+        const veiculos = await prisma.veiculo.findMany({
+            where: {
+                mecanico_id: id
+            }
+        })
         console.log(veiculos)
-        res.status(201).json({veiculos})
+        res.status(201).json(veiculos)
     } catch (erro) {
         console.error('Erro ao listar Veiculos', erro)
         res.status(500).json({ error: `Erro ao listar Veiculos: ${erro.message}`})
